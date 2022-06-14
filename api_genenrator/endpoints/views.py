@@ -1,6 +1,6 @@
 from pydantic import constr
 
-from common import ResponseModel
+from api_genenrator.common import ResponseModel
 
 
 def get_view(

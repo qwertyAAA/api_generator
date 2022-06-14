@@ -1,12 +1,12 @@
-from endpoints import apps
-from endpoints.views import (
+from api_genenrator.endpoints import apps
+from api_genenrator.endpoints.views import (
     get_view,
     get_list_view,
     post_view,
     put_view,
     delete_view
 )
-from common.route import register
+from api_genenrator.common.route import register
 
 registered_apps = []
 

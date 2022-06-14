@@ -5,7 +5,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from common import settings
+from api_genenrator.common import settings
 
 
 def get_logger(logger_name: str, **kwargs) -> logger:

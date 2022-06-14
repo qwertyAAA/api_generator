@@ -13,7 +13,7 @@ from typing import (
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import Response, UJSONResponse
 
-from common import Responses, ResponseModel
+from api_genenrator.common import Responses, ResponseModel
 
 
 def register(

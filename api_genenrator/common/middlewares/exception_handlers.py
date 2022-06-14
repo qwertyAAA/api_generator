@@ -6,11 +6,11 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from fastapi.responses import UJSONResponse
 
-from common import (
+from api_genenrator.common import (
     ResponseModel,
     Responses
 )
-from common.utils import get_logger
+from api_genenrator.common.utils import get_logger
 
 logger = get_logger("exception_handlers")
 
