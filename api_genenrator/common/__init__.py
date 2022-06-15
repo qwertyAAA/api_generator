@@ -1,9 +1,9 @@
-from .settings import settings
-from .models import (
+from api_genenrator.common.settings import settings
+from api_genenrator.common.models import (
     ResponseModel,
     Responses
 )
-from .utils import setup_loguru_uvicorn_logging_intercept
+from api_genenrator.common.utils import setup_loguru_uvicorn_logging_intercept
 
 __all__ = [
     "settings",
