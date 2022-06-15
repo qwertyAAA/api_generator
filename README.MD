@@ -1,6 +1,8 @@
 api generator
 =====================
-
+```
+api generator is an auto api generator based on FastAPI
+```
 ## route define
 ```
 /api/v1/{resource_name}
