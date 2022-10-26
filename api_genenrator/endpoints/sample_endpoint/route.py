@@ -1,5 +1,5 @@
-from api_genenrator.endpoints import apps
-from api_genenrator.endpoints.views import (
+from api_genenrator.endpoints.sample_endpoint.apps import apps
+from api_genenrator.endpoints.sample_endpoint.views import (
     get_view,
     get_list_view,
     post_view,

@@ -10,7 +10,7 @@ from api_genenrator.common.middlewares.exception_handlers import (
     handle_server_error
 )
 
-from api_genenrator.endpoints.route import registered_apps
+from api_genenrator.endpoints.sample_endpoint import registered_apps
 
 app = FastAPI(
     title="API Generator",
@@ -26,7 +26,5 @@ app.add_exception_handler(Exception, handle_server_error)
 
 setup_loguru_uvicorn_logging_intercept()
 
-# todo save swagger ui to the local and build a static server to provide swagger ui static files
-# todo or just modify "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4" -> "https://petstore.swagger.io"  # fastapi/openapi/docs.py.get_swagger_ui_html lineno get_swagger_ui_html 20-21
 if __name__ == '__main__':
     run("main:app", host="0.0.0.0", port=9980, workers=1)

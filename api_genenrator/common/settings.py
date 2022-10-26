@@ -28,6 +28,12 @@ class Settings(BaseSettings):
     # log rotation
     log_rotation: Union[int, timedelta, time, str, Callable] = 10485760  # 10MiB
 
+    # loguru format str
+    format_str: Optional[str] = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>" \
+                                " - <level>{level}</level>" \
+                                " - <cyan>{name}</cyan>.<cyan>{function}</cyan>:<cyan>{line}</cyan>" \
+                                " - <level>{message}</level>"
+
     # timezone
     timezone: str = "UTC"
 
