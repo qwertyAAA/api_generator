@@ -1,16 +1,16 @@
-from traceback import format_exception_only
-from typing import Callable, Any
+from typing import Callable
 
 from fastapi import Request, Response
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
 from starlette.exceptions import HTTPException
-from fastapi.responses import UJSONResponse
 
 from api_genenrator.common import (
     ResponseModel,
     Responses
 )
-from api_genenrator.common.utils import get_logger
+from api_genenrator.common.utils.logger import get_logger
 
 logger = get_logger("exception_handlers")
 
@@ -23,14 +23,13 @@ def handler(func: Callable) -> Callable:
     :return: Callable
     """
 
-    def inner(request: Request, *args, **kwargs) -> Any:
+    def inner(request: Request, *args, **kwargs):
         try:
             return func(request, *args, **kwargs)
         except Exception as e:
-            logger.error(f"An exception occurred while handling server error: "
-                         f"{format_exception_only(type(e), e)[0].strip()}")
-            return UJSONResponse(
-                content=ResponseModel(code=500, msg=Responses[500]["description"]).dict(),
+            logger.exception("An exception occurred while handling server error", e)
+            return JSONResponse(
+                content=ResponseModel(status=500, msg=Responses[500]["description"]).dict(),
                 status_code=500
             )
 
@@ -43,21 +42,20 @@ def handle_validation_error(
         exception: RequestValidationError
 ) -> Response:
     """
-    Request data validation error handler
+    RequestValidationError handler
     :param request: FastAPI Request
     :param exception: object of validation errors
     :return: FastAPI Response
     """
-    logger.error(f"request: {request.url} request data validation error: "
-                 f"{format_exception_only(type(exception), exception)[0].strip()}")
-    return UJSONResponse(
+    logger.exception(f"request: {request.url} request data validation error: ", exception)
+    return JSONResponse(
         content=ResponseModel(
-            code=422,
+            status=422,
             msg=Responses[422]["description"],
             data={
                 "path_params": request.path_params,
                 "query_params": dict(request.query_params),
-                "error_msg": str(exception)
+                "detail": str(exception)
             }
         ).dict(),
         status_code=422
@@ -72,16 +70,16 @@ def handle_http_error(request: Request, exception: HTTPException) -> Response:
     :param exception: object of HTTPException
     :return: FastAPI Response
     """
-    logger.error(
-        f"request: {request.url} failed caused by: "
-        f"{format_exception_only(type(exception), exception)[0].strip()}")
-    return UJSONResponse(
+    logger.exception(f"request: {request.url} failed caused by: ", exception)
+    return JSONResponse(
         content=ResponseModel(
-            code=exception.status_code,
-            msg=Responses[exception.status_code]["description"],
+            status=exception.status_code,
+            msg=Responses.get(exception.status_code, {}).get("description", exception.detail),
             data={
+                "headers": dict(request.headers),
                 "path_params": request.path_params,
                 "query_params": str(request.query_params),
+                "detail": exception.detail
             }
         ).dict(),
         status_code=exception.status_code
@@ -91,18 +89,20 @@ def handle_http_error(request: Request, exception: HTTPException) -> Response:
 @handler
 def handle_server_error(request: Request, exception: Exception) -> Response:
     """
-    Server Error handler
+    Exception handler
     :param request: FastAPI Request
     :param exception: object of Exception
     :return: FastAPI Response
     """
-    logger.error(
-        f"request: {request.url} failed caused by: "
-        f"{format_exception_only(type(exception), exception)[0].strip()}")
-    return UJSONResponse(
-        content=ResponseModel(code=500, msg=Responses[500]["description"], data={
-            "path_params": request.path_params,
-            "query_params": str(request.query_params),
-        }).dict(),
+    logger.exception(f"request: {request.url} failed", exception)
+    return JSONResponse(
+        content=ResponseModel(
+            status=500,
+            msg=Responses[500]["description"],
+            data={
+                "headers": dict(request.headers),
+                "path_params": request.path_params,
+                "query_params": str(request.query_params)
+            }).dict(),
         status_code=500
     )

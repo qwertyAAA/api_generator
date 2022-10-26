@@ -25,7 +25,7 @@ def post_view(
 
 def put_view() -> ResponseModel:
     # todo implement idempotence
-    return ResponseModel(code=201)
+    return ResponseModel(status=201)
 
 
 def delete_view(

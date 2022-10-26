@@ -7,7 +7,7 @@ class ResponseModel(BaseModel):
     """
     Response model
     """
-    code: Optional[int] = Field(200, description="status code")
+    status: Optional[int] = Field(200, description="status code")
     msg: Optional[str] = Field("OK", description="response message")
     data: Optional[dict] = Field({}, description="response data")
 

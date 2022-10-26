@@ -1,6 +1,9 @@
+# Copyright (c) 2022, Hyve Solutions. All rights reserved
+
 """logger(loguru) utils"""
 
 import logging
+import sys
 from pathlib import Path
 
 from loguru import logger
@@ -12,7 +15,7 @@ def get_logger(logger_name: str, **kwargs) -> logger:
     """
     get a bound logger
     :param logger_name: name of logger
-    :param kwargs: other kwargs for logger.add exclude `sink`, `rotation`, `filter`
+    :param kwargs: other kwargs for logger.add exclude `sink`, `rotation`, `filter`, `format`
     :return: logger
     """
     if "sink" in kwargs:
@@ -27,9 +30,15 @@ def get_logger(logger_name: str, **kwargs) -> logger:
         del kwargs["filter"]
         logger.warning("`filter` argument is not supported")
 
+    if "format" in kwargs:
+        del kwargs["format"]
+        logger.warning("`format` argument is not supported")
+
     logger.add(
         Path(settings.log_dir, logger_name),
         rotation=settings.log_rotation,
+        format=settings.format_str,
+        colorize=kwargs.get("colorize", True),
         filter=lambda record: record["extra"].get("logger_name") == logger_name,
         **kwargs
     )
@@ -61,7 +70,15 @@ def setup_loguru_uvicorn_logging_intercept() -> None:
     :return: None
     """
     logging.basicConfig(handlers=[InterceptHandler()], level=logging.getLevelName("INFO"))
-
+    logger.configure(
+        handlers=[
+            dict(
+                sink=sys.stdout,
+                format=settings.format_str,
+                colorize=True,
+            ),
+        ]
+    )
     for logger_name in ("uvicorn.error", "uvicorn.asgi", "uvicorn.access"):
         mod_logger = logging.getLogger(logger_name)
         mod_logger.handlers = [InterceptHandler(level=logging.getLevelName("INFO"))]
