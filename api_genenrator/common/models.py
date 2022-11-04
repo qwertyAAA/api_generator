@@ -1,18 +1,20 @@
+#  Copyright (c) 2022, Hyve Solutions. All rights reserved
+
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
 
 class ResponseModel(BaseModel):
     """
     Response model
     """
-    status: Optional[int] = Field(200, description="status code")
-    msg: Optional[str] = Field("OK", description="response message")
+    code: int = Field(..., description="status code")
+    msg: str = Field(..., description="response message")
     data: Optional[dict] = Field({}, description="response data")
 
 
-Responses = {
+responses = {
     200: {
         "model": ResponseModel,
         "content": {"application/json": {}}, "description": "OK"
@@ -21,9 +23,17 @@ Responses = {
         "model": ResponseModel,
         "content": {"application/json": {}}, "description": "Created"
     },
+    205: {
+        "model": ResponseModel,
+        "content": {"application/json": {}}, "description": "Reset Content"
+    },
     400: {
         "model": ResponseModel,
         "content": {"application/json": {}}, "description": "Bad Request"
+    },
+    401: {
+        "model": ResponseModel,
+        "content": {"application/json": {}}, "description": "Unauthorized"
     },
     403: {
         "model": ResponseModel,
@@ -36,6 +46,10 @@ Responses = {
     405: {
         "model": ResponseModel,
         "content": {"application/json": {}}, "description": "Method Not Allowed"
+    },
+    409: {
+        "model": ResponseModel,
+        "content": {"application/json": {}}, "description": "Conflict"
     },
     422: {
         "model": ResponseModel,
