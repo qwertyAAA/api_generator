@@ -25,17 +25,17 @@ for app in apps:
     )
     register(
         app,
-        path="/{task_id}",
+        path="",
         view_func=post_view,
         request_method="POST",
-        description=f"update {app.prefix}"
+        description=f"create {app.prefix}"
     )
     register(
         app,
-        path="",
+        path="/{task_id}",
         view_func=put_view,
         request_method="PUT",
-        description=f"create {app.prefix}"
+        description=f"update {app.prefix}"
     )
     register(
         app,
